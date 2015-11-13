@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 
 import javax.inject.Inject;
 
-import miroshnychenko.mykola.twitterclient.models.Token;
+import miroshnychenko.mykola.twitterclient.models.AuthToken;
 
 /**
  * Created by nsmirosh on 11/10/2015.
@@ -32,14 +32,14 @@ public class PreferenceUtils {
         mPrefs.edit().clear().apply();
     }
 
-    public void saveToken(Token token) {
+    public void saveToken(AuthToken authToken) {
         SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putString(PREFS_KEY_TOKEN, mGson.toJson(token));
+        editor.putString(PREFS_KEY_TOKEN, mGson.toJson(authToken));
         editor.apply();
     }
 
-    public Token getToken() {
-        return mGson.fromJson(mPrefs.getString(PREFS_KEY_TOKEN, ""), Token.class);
+    public AuthToken getToken() {
+        return mGson.fromJson(mPrefs.getString(PREFS_KEY_TOKEN, ""), AuthToken.class);
     }
 
     public boolean hasToken() {
