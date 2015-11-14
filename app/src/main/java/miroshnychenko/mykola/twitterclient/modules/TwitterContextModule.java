@@ -27,11 +27,14 @@ import dagger.Module;
 import dagger.Provides;
 import miroshnychenko.mykola.twitterclient.BuildConfig;
 import miroshnychenko.mykola.twitterclient.TwitterApplication;
+import miroshnychenko.mykola.twitterclient.activities.CreateTweetActivity;
 import miroshnychenko.mykola.twitterclient.activities.MainActivity;
 import miroshnychenko.mykola.twitterclient.activities.StartUpActivity;
 import miroshnychenko.mykola.twitterclient.http.LoginApi;
 import miroshnychenko.mykola.twitterclient.http.RestAPI;
 import miroshnychenko.mykola.twitterclient.misc.AndroidBus;
+import miroshnychenko.mykola.twitterclient.receivers.NetworkChangeReceiver;
+import miroshnychenko.mykola.twitterclient.services.UploadTweetService;
 import miroshnychenko.mykola.twitterclient.utils.PreferenceUtils;
 import retrofit.Endpoint;
 import retrofit.RestAdapter;
@@ -50,12 +53,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
         complete = false,
         library = true,
         injects = {
-                TwitterApplication.class, StartUpActivity.class, PreferenceUtils.class, MainActivity.class
+                TwitterApplication.class, StartUpActivity.class, PreferenceUtils.class, MainActivity.class,
+                CreateTweetActivity.class, NetworkChangeReceiver.class, UploadTweetService.class
         }
 )
 public class TwitterContextModule {
-
-    public static final String RETROFIT_TAG = "retrofit";
 
     Context mContext;
 

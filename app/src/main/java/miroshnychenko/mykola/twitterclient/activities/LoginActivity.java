@@ -1,22 +1,15 @@
 package miroshnychenko.mykola.twitterclient.activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.fizzbuzz.android.dagger.InjectingActivityModule;
-import com.squareup.otto.Subscribe;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import com.twitter.sdk.android.Twitter;
+
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.Session;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterAuthToken;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
@@ -25,14 +18,10 @@ import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import javax.inject.Inject;
 
 import dagger.Module;
-import io.fabric.sdk.android.Fabric;
 import miroshnychenko.mykola.twitterclient.R;
 import miroshnychenko.mykola.twitterclient.activities.base.BaseAsyncFragmentActivity;
-import miroshnychenko.mykola.twitterclient.helper.SessionIdentifierGenerator;
 import miroshnychenko.mykola.twitterclient.models.AuthToken;
-import miroshnychenko.mykola.twitterclient.models.Login;
 import miroshnychenko.mykola.twitterclient.modules.TwitterContextModule;
-import miroshnychenko.mykola.twitterclient.tasks.LoginTask;
 import miroshnychenko.mykola.twitterclient.utils.PreferenceUtils;
 
 public class LoginActivity extends BaseAsyncFragmentActivity {
@@ -56,14 +45,12 @@ public class LoginActivity extends BaseAsyncFragmentActivity {
         mTwitterLoginBtn.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
-                // Do something with result, which provides a TwitterSession for making API calls
-
-                Result<TwitterSession> result1 = result;
 
                 TwitterAuthToken TwitterToken = result.data.getAuthToken();
-                mPreferenceUtils.saveToken(new AuthToken(TwitterToken.token, TwitterToken.secret));
+                mPreferenceUtils.saveAuthToken(new AuthToken(TwitterToken.token, TwitterToken.secret));
 
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             }
 

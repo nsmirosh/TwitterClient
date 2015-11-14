@@ -5,9 +5,16 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.twitter.sdk.android.core.models.Tweet;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
+import miroshnychenko.mykola.twitterclient.beans.TweetBean;
 import miroshnychenko.mykola.twitterclient.models.AuthToken;
 
 /**
@@ -15,7 +22,9 @@ import miroshnychenko.mykola.twitterclient.models.AuthToken;
  */
 public class PreferenceUtils {
 
-    public static final String PREFS_KEY_TOKEN = "prefsToken";
+    public static final String PREFS_TOKEN_KEY = "prefs_token_key";
+    public static final String PREFS_TWEETS_KEY = "prefs_tweets_key";
+    public static final String PREFS_TWEETS_BEAN_KEY = "prefs_tweets_bean_key";
 
     private SharedPreferences mPrefs;
 
@@ -32,18 +41,67 @@ public class PreferenceUtils {
         mPrefs.edit().clear().apply();
     }
 
-    public void saveToken(AuthToken authToken) {
+    public void saveAuthToken(AuthToken authToken) {
         SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putString(PREFS_KEY_TOKEN, mGson.toJson(authToken));
+        editor.putString(PREFS_TOKEN_KEY, mGson.toJson(authToken));
         editor.apply();
     }
 
-    public AuthToken getToken() {
-        return mGson.fromJson(mPrefs.getString(PREFS_KEY_TOKEN, ""), AuthToken.class);
+    public AuthToken getAuthToken() {
+        return mGson.fromJson(mPrefs.getString(PREFS_TOKEN_KEY, ""), AuthToken.class);
+    }
+    public void deleteToken() {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.remove(PREFS_TOKEN_KEY);
+        editor.apply();
     }
 
     public boolean hasToken() {
-        return getToken() != null;
+        return getAuthToken() != null;
     }
 
+    public void saveTweets(List<Tweet> tweets) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(PREFS_TWEETS_KEY + getAuthToken().getToken(), mGson.toJson(tweets));
+        editor.apply();
+    }
+
+    public List<Tweet> getTweets() {
+        Type type = new TypeToken<List<Tweet>>(){}.getType();
+        return mGson.fromJson(mPrefs.getString(PREFS_TWEETS_KEY + getAuthToken().getToken(), null), type);
+    }
+
+    public boolean hasTweets() {
+        return mPrefs.contains(PREFS_TWEETS_KEY + getAuthToken().getToken());
+    }
+
+    public void saveTweetBean(TweetBean tweetBean) {
+        List<TweetBean> tweetBeans;
+        if (getTweetBeans() != null) {
+            tweetBeans = getTweetBeans();
+            tweetBeans.add(0, tweetBean);
+        }
+        else {
+            tweetBeans = new ArrayList<>();
+            tweetBeans.add(tweetBean);
+        }
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(PREFS_TWEETS_BEAN_KEY + getAuthToken().getToken(), mGson.toJson(tweetBeans));
+        editor.apply();
+    }
+
+    public void saveTweetBeans(List<TweetBean> tweetBeans) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(PREFS_TWEETS_BEAN_KEY + getAuthToken().getToken(), mGson.toJson(tweetBeans));
+        editor.apply();
+    }
+
+    public List<TweetBean> getTweetBeans() {
+        Type type = new TypeToken<List<TweetBean>>(){}.getType();
+        return mGson.fromJson(mPrefs.getString(PREFS_TWEETS_BEAN_KEY + getAuthToken().getToken(), null), type);
+    }
+
+    public boolean hasTweetBeans() {
+        return mPrefs.contains(PREFS_TWEETS_BEAN_KEY + getAuthToken().getToken());
+    }
 }

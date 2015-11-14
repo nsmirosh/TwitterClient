@@ -1,30 +1,24 @@
 package miroshnychenko.mykola.twitterclient.activities;
 
-import android.app.Activity;
-import android.app.ListActivity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.widget.ListView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
-import com.fizzbuzz.android.dagger.InjectingActivityModule;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.Session;
-import com.twitter.sdk.android.core.SessionManager;
 import com.twitter.sdk.android.core.TwitterApiClient;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
-import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.models.Tweet;
-import com.twitter.sdk.android.core.services.SearchService;
 import com.twitter.sdk.android.core.services.StatusesService;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
-import com.twitter.sdk.android.tweetui.TweetTimelineListAdapter;
-import com.twitter.sdk.android.tweetui.UserTimeline;
 
 import java.io.File;
 import java.util.List;
@@ -34,12 +28,10 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import dagger.Module;
 import miroshnychenko.mykola.twitterclient.R;
 import miroshnychenko.mykola.twitterclient.TwitterApplication;
-import miroshnychenko.mykola.twitterclient.activities.base.BaseAsyncFragmentActivity;
 import miroshnychenko.mykola.twitterclient.adapters.TweetAdapter;
-import miroshnychenko.mykola.twitterclient.modules.TwitterContextModule;
+import miroshnychenko.mykola.twitterclient.utils.PreferenceUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,8 +41,17 @@ public class MainActivity extends AppCompatActivity {
     @Inject
     TweetAdapter mTweetAdapter;
 
-    @Bind(R.id.activity_main_user_timeline_lv)
-    ListView mTweetLV;
+    @Inject
+    PreferenceUtils mPreferenceUtils;
+
+    @Bind(R.id.activity_main_user_timeline_rv)
+    RecyclerView mTweetRV;
+
+    @Bind(R.id.activity_main_srl)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+
+
+    StatusesService mStatusesService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,67 +59,87 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         ((TwitterApplication) getApplication()).inject(this);
-//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-//        mTweetLV.setLayoutManager(layoutManager);
 
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateUserTimeLine();
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        mTweetRV.setLayoutManager(layoutManager);
+
+        if (mPreferenceUtils.hasTweets()) {
+            setAdapterData(mPreferenceUtils.getTweets());
+        }
 
         TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
-        StatusesService statusesService = twitterApiClient.getStatusesService();
-
-
-        final UserTimeline userTimeline = new UserTimeline.Builder()
-                .screenName(null)
-                .build();
-
-
-        final TweetTimelineListAdapter adapter = new TweetTimelineListAdapter.Builder(this)
-                .setTimeline(userTimeline)
-                .build();
-
-        mTweetLV.setAdapter(adapter);
-
-//        statusesService.userTimeline(null, null, null, null, null, null, null, null, null, new Callback<List<Tweet>>() {
-//            @Override
-//            public void success(Result<List<Tweet>> result) {
-//
-////                mTweetAdapter.addAll(result.data);
-////                mTweetRV.setAdapter(mTweetAdapter);
-//
-//            }
-//
-//            public void failure(TwitterException exception) {
-//                //Do something on failure
-//            }
-//        });
+        mStatusesService = twitterApiClient.getStatusesService();
     }
 
-    public void setUpTimeLine() {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        updateUserTimeLine();
+//        if (mPreferenceUtils.getTweetBeans().size() > 0) {
+//            registerReceiver()
+//        }
+    }
 
+    public void updateUserTimeLine() {
+        mStatusesService.userTimeline(null, null, null, null, null, null, null, null, null, new Callback<List<Tweet>>() {
+            @Override
+            public void success(Result<List<Tweet>> result) {
+                setAdapterData(result.data);
+                mPreferenceUtils.saveTweets(result.data);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+
+            public void failure(TwitterException exception) {
+                //Do something on failure
+            }
+
+
+        });
+
+    }
+
+    public void setAdapterData(List<Tweet> tweets) {
+        mTweetAdapter.addAll(tweets);
+        mTweetRV.setAdapter(mTweetAdapter);
     }
 
 
     @OnClick(R.id.list_fragment_create_income_fab)
     public void buildTweet() {
-        TweetComposer.Builder builder = new TweetComposer.Builder(this)
-                .text("just setting up my Fabric.")
-                .image(Uri.fromFile(new File("/sdcard/cats.jpg")));
-        builder.show();
+        Intent intent = new Intent(this, CreateTweetActivity.class);
+        startActivity(intent);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_activity_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
-//    //module
-//    @Override
-//    protected Object getModule() {
-//        return new FeedActivityModule();
-//    }
-//
-//    @Module(
-//            injects = {MainActivity.class},
-//            addsTo = TwitterContextModule.class,
-//            includes = InjectingActivityModule.class
-//    )
-//
-//    public static class FeedActivityModule {
-//
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.menu_main_log_out:
+                mPreferenceUtils.deleteToken();
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

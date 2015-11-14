@@ -87,7 +87,7 @@ public class TwitterOkClient extends OkClient {
             return request;
         }
         List<Header> headers1 = new ArrayList<>();
-        String tokenStr = mPreferenceUtils.getToken().getToken();
+        String tokenStr = mPreferenceUtils.getAuthToken().getToken();
         Header header = new Header(HTTP_HEADER_AUTH, "Bearer " + tokenStr);
         headers1.add(header);
 

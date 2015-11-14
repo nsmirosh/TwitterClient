@@ -3,4 +3,10 @@
 
     <string name="dialog_progress_generic">In progress&#8230;</string>
     <string name="activity_login_enter_btn">Log in</string>
+
+
+    <string name="activity_create_tweet_tweet">Tweet!</string>
+
+    <string name="menu_activity_main_log_out">Log out</string>
+    <string name="activity_create_tweet_text_hint">Write something</string>
 </resources>
