@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.Window;
 
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -55,10 +56,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         ((TwitterApplication) getApplication()).inject(this);
+
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -83,9 +86,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         updateUserTimeLine();
-//        if (mPreferenceUtils.getTweetBeans().size() > 0) {
-//            registerReceiver()
-//        }
+        setProgressBarIndeterminateVisibility(Boolean.TRUE);
     }
 
     public void updateUserTimeLine() {
@@ -95,13 +96,13 @@ public class MainActivity extends AppCompatActivity {
                 setAdapterData(result.data);
                 mPreferenceUtils.saveTweets(result.data);
                 mSwipeRefreshLayout.setRefreshing(false);
+                setProgressBarIndeterminateVisibility(Boolean.FALSE);
             }
 
             public void failure(TwitterException exception) {
                 //Do something on failure
+                setProgressBarIndeterminateVisibility(Boolean.FALSE);
             }
-
-
         });
 
     }

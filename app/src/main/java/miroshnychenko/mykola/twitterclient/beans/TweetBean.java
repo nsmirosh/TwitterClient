@@ -1,5 +1,6 @@
 package miroshnychenko.mykola.twitterclient.beans;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -9,9 +10,15 @@ import android.os.Parcelable;
 public class TweetBean implements Parcelable{
 
     String text;
+    String imageUri;
 
-    public TweetBean(String text) {
+    public TweetBean() {
+
+    }
+
+    public TweetBean(String text, String imageUri) {
         this.text = text;
+        this.imageUri = imageUri;
     }
 
     public String getText() {
@@ -22,6 +29,14 @@ public class TweetBean implements Parcelable{
         this.text = text;
     }
 
+    public String getImagePath() {
+        return imageUri;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imageUri = imagePath;
+    }
+
     public int describeContents() {
         return 0;
     }
@@ -29,6 +44,7 @@ public class TweetBean implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(text);
+        dest.writeString(imageUri);
 
     }
 
@@ -45,5 +61,6 @@ public class TweetBean implements Parcelable{
 
     private TweetBean(Parcel in) {
         text = in.readString();
+        imageUri = in.readString();
     }
 }
