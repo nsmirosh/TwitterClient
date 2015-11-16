@@ -16,7 +16,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import miroshnychenko.mykola.twitterclient.R;
-import miroshnychenko.mykola.twitterclient.TwitterApplication;
+import miroshnychenko.mykola.twitterclient.application.TwitterApplication;
 import miroshnychenko.mykola.twitterclient.models.AuthToken;
 import miroshnychenko.mykola.twitterclient.utils.PreferenceUtils;
 
@@ -53,7 +53,6 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void failure(TwitterException exception) {
-                // Do something on failure
             }
         });
     }
@@ -62,7 +61,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Pass the activity result to the login button.
         mTwitterLoginBtn.onActivityResult(requestCode, resultCode, data);
     }
 }

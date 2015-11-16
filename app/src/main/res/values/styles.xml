@@ -15,4 +15,20 @@
         <item name="android:layout_marginBottom">0dp</item>
     </style>
 
+
+    <style name="p1">
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="p2">
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="p3">
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
 </resources>

@@ -12,8 +12,9 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import miroshnychenko.mykola.twitterclient.TwitterApplication;
+import miroshnychenko.mykola.twitterclient.application.TwitterApplication;
 import miroshnychenko.mykola.twitterclient.activities.CreateTweetActivity;
+import miroshnychenko.mykola.twitterclient.activities.LoginActivity;
 import miroshnychenko.mykola.twitterclient.activities.MainActivity;
 import miroshnychenko.mykola.twitterclient.activities.StartUpActivity;
 import miroshnychenko.mykola.twitterclient.receivers.NetworkChangeReceiver;
@@ -30,7 +31,7 @@ import retrofit.converter.GsonConverter;
         complete = false,
         library = true,
         injects = {
-                TwitterApplication.class, StartUpActivity.class, PreferenceUtils.class, MainActivity.class,
+                TwitterApplication.class, StartUpActivity.class, PreferenceUtils.class, MainActivity.class, LoginActivity.class,
                 CreateTweetActivity.class, NetworkChangeReceiver.class, UploadTweetService.class, PicassoUtils.class
         }
 )

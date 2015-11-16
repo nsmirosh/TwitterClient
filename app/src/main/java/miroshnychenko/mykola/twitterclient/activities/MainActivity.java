@@ -1,16 +1,13 @@
 package miroshnychenko.mykola.twitterclient.activities;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.Window;
 
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -19,9 +16,7 @@ import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.core.services.StatusesService;
-import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
-import java.io.File;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -30,11 +25,12 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import miroshnychenko.mykola.twitterclient.R;
-import miroshnychenko.mykola.twitterclient.TwitterApplication;
+import miroshnychenko.mykola.twitterclient.application.TwitterApplication;
+import miroshnychenko.mykola.twitterclient.activities.base.BaseProgressActivity;
 import miroshnychenko.mykola.twitterclient.adapters.TweetAdapter;
 import miroshnychenko.mykola.twitterclient.utils.PreferenceUtils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseProgressActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
@@ -51,12 +47,10 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.activity_main_srl)
     SwipeRefreshLayout mSwipeRefreshLayout;
 
-
     StatusesService mStatusesService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
@@ -76,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (mPreferenceUtils.hasTweets()) {
             setAdapterData(mPreferenceUtils.getTweets());
+        } else {
+            showProgressDialog();
         }
 
         TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
@@ -86,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         updateUserTimeLine();
-        setProgressBarIndeterminateVisibility(Boolean.TRUE);
+
     }
 
     public void updateUserTimeLine() {
@@ -96,14 +92,14 @@ public class MainActivity extends AppCompatActivity {
                 setAdapterData(result.data);
                 mPreferenceUtils.saveTweets(result.data);
                 mSwipeRefreshLayout.setRefreshing(false);
-                setProgressBarIndeterminateVisibility(Boolean.FALSE);
             }
 
             public void failure(TwitterException exception) {
-                //Do something on failure
-                setProgressBarIndeterminateVisibility(Boolean.FALSE);
+                mSwipeRefreshLayout.setRefreshing(false);
+
             }
         });
+        dismissProgressDialog();
 
     }
 
@@ -121,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_activity_main, menu);
         return super.onCreateOptionsMenu(menu);
@@ -129,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.menu_main_log_out:
                 mPreferenceUtils.deleteToken();
@@ -142,5 +136,10 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public String getProgressString() {
+        return getString(R.string.activity_main_downloading_tweets);
     }
 }

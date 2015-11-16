@@ -44,8 +44,7 @@ public class CreateTweetActivityTest extends ActivityInstrumentationTestCase2<Cr
     public void emptyTweet_test() {
         onView(withId(R.id.activity_create_tweet_et)).perform(typeText(""));
         onView(withId(R.id.activity_create_tweet_done_btn)).perform(click());
-        onView(withId(R.id.activity_create_tweet_et)).check(matches(withError(
-                "You have to tweet some text")));
+        onView(withId(R.id.activity_create_tweet_et)).check(matches(withError("You have to tweet some text")));
     }
 
     @Test

@@ -6,9 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -29,12 +27,13 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import miroshnychenko.mykola.twitterclient.R;
-import miroshnychenko.mykola.twitterclient.TwitterApplication;
+import miroshnychenko.mykola.twitterclient.application.TwitterApplication;
+import miroshnychenko.mykola.twitterclient.activities.base.BaseProgressActivity;
 import miroshnychenko.mykola.twitterclient.beans.TweetBean;
 import miroshnychenko.mykola.twitterclient.utils.MediaUtils;
 import miroshnychenko.mykola.twitterclient.utils.PreferenceUtils;
 
-public class CreateTweetActivity extends AppCompatActivity {
+public class CreateTweetActivity extends BaseProgressActivity {
 
 
     public static final String TAG = CreateTweetActivity.class.getSimpleName();
@@ -61,7 +60,6 @@ public class CreateTweetActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_tweet);
         ButterKnife.bind(this);
@@ -93,7 +91,7 @@ public class CreateTweetActivity extends AppCompatActivity {
                     mPreviewIV.setImageBitmap(ThumbImage);
             }
         } else {
-            Toast toast = Toast.makeText(this, "No Image is selected.",
+            Toast toast = Toast.makeText(this, getString(R.string.activity_create_tweet_no_image_is_selected),
                     Toast.LENGTH_LONG);
             toast.show();
         }
@@ -112,7 +110,7 @@ public class CreateTweetActivity extends AppCompatActivity {
             public void failure(TwitterException exception) {
                 saveTweet();
                 finish();
-                Toast toast = Toast.makeText(getApplicationContext(), "Your tweet is saved and will be posted when internet is available.",
+                Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.activity_create_tweet_saved),
                         Toast.LENGTH_LONG);
                 toast.show();
             }
@@ -128,13 +126,14 @@ public class CreateTweetActivity extends AppCompatActivity {
 
             public void failure(TwitterException exception) {
                 saveTweet();
-                Toast toast = Toast.makeText(getApplicationContext(), "Your tweet is saved and will be posted when internet is available.",
+                Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.activity_create_tweet_saved),
                         Toast.LENGTH_LONG);
                 toast.show();
             }
         });
+        dismissProgressDialog();
         finish();
-        setProgressBarIndeterminateVisibility(false);
+
     }
 
     @OnClick(R.id.activity_create_tweet_done_btn)
@@ -147,7 +146,7 @@ public class CreateTweetActivity extends AppCompatActivity {
             mTextET.setError(getString(R.string.activity_create_tweet_too_many_characters_error));
             return;
         }
-        setProgressBarIndeterminateVisibility(true);
+        showProgressDialog();
         if (mImageUri != null) {
             uploadImage();
         } else {
@@ -164,4 +163,9 @@ public class CreateTweetActivity extends AppCompatActivity {
         mPreferenceUtils.saveTweetBean(tweetBean);
     }
 
+
+    @Override
+    public String getProgressString() {
+        return getString(R.string.activity_create_tweet_posting_tweet);
+    }
 }

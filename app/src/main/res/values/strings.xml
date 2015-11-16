@@ -12,4 +12,10 @@
 
     <string name="activity_create_tweet_enter_text_error">You have to tweet some text</string>
     <string name="activity_create_tweet_too_many_characters_error">The tweet has to be less than 140 characters</string>
+    <string name="activity_main_downloading_tweets">Downloading tweets</string>
+    <string name="activity_create_tweet_posting_tweet">Posting your tweet</string>
+
+
+    <string name="activity_create_tweet_saved">Your tweet is saved and will be posted when internet is available</string>
+    <string name="activity_create_tweet_no_image_is_selected">No Image is selected</string>
 </resources>

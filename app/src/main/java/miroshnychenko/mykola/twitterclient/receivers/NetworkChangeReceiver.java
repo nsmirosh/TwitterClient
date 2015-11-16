@@ -8,13 +8,11 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 
-import org.parceler.Parcels;
-
 import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import miroshnychenko.mykola.twitterclient.TwitterApplication;
+import miroshnychenko.mykola.twitterclient.application.TwitterApplication;
 import miroshnychenko.mykola.twitterclient.beans.TweetBean;
 import miroshnychenko.mykola.twitterclient.services.UploadTweetService;
 import miroshnychenko.mykola.twitterclient.utils.PreferenceUtils;

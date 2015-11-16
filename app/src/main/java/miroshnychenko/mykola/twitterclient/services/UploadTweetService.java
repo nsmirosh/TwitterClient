@@ -18,7 +18,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import miroshnychenko.mykola.twitterclient.TwitterApplication;
+import miroshnychenko.mykola.twitterclient.application.TwitterApplication;
 import miroshnychenko.mykola.twitterclient.beans.TweetBean;
 import miroshnychenko.mykola.twitterclient.utils.MediaUtils;
 import miroshnychenko.mykola.twitterclient.utils.PreferenceUtils;

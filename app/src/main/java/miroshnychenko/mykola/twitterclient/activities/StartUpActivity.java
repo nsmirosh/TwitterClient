@@ -4,13 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.twitter.sdk.android.Twitter;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-
 import javax.inject.Inject;
 
-import io.fabric.sdk.android.Fabric;
-import miroshnychenko.mykola.twitterclient.TwitterApplication;
+import miroshnychenko.mykola.twitterclient.application.TwitterApplication;
 import miroshnychenko.mykola.twitterclient.utils.PreferenceUtils;
 
 public class StartUpActivity extends AppCompatActivity {

@@ -48,7 +48,7 @@ public class PreferenceUtils {
     }
 
     public AuthToken getAuthToken() {
-        return mGson.fromJson(mPrefs.getString(PREFS_TOKEN_KEY, ""), AuthToken.class);
+        return mGson.fromJson(mPrefs.getString(PREFS_TOKEN_KEY, null), AuthToken.class);
     }
     public void deleteToken() {
         SharedPreferences.Editor editor = mPrefs.edit();

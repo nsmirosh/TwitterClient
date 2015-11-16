@@ -1,4 +1,4 @@
-package miroshnychenko.mykola.twitterclient;
+package miroshnychenko.mykola.twitterclient.application;
 
 import android.app.Application;
 
